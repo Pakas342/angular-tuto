@@ -1,4 +1,4 @@
-import { Injectable, signal } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { HousingLocationInfo } from "../interfaces/housing-location-info";
 
 interface SearchInput {
@@ -12,7 +12,7 @@ interface SearchInput {
 export class HousingService {
   readonly baseUrl = "https://angular.dev/assets/images/tutorials/common";
 
-  initialData = [
+  housingLocationList: HousingLocationInfo[] = [
     {
       id: 0,
       name: "Acme Fresh Start Housing",
@@ -115,10 +115,12 @@ export class HousingService {
     },
   ];
 
-  housingLocationList = signal<HousingLocationInfo[]>(this.initialData);
+  getAllHousingLocations(): HousingLocationInfo[] {
+    return this.housingLocationList;
+  }
 
   getHousingLocationById(id: number): HousingLocationInfo | undefined {
-    return this.housingLocationList().find(
+    return this.housingLocationList.find(
       (housingLocation) => housingLocation.id === id,
     );
   }
@@ -129,19 +131,15 @@ export class HousingService {
     );
   }
 
-  searchHouses(input: SearchInput): undefined {
+  searchHouses(input: SearchInput): HousingLocationInfo[] {
     const city = input.city;
-
+    console.log(city);
     if (input.searchedBy === "city" && city) {
-      const temp = this.housingLocationList().filter((housingLocation) =>
+      return this.housingLocationList.filter((housingLocation) =>
         housingLocation.city.includes(city),
       );
-
-      if (temp.length > 0) {
-        this.housingLocationList.set(temp);
-        return;
-      }
+    } else {
+      return [];
     }
-    this.housingLocationList.set(this.initialData);
   }
 }

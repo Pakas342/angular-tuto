@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, effect } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 import { HousingLocation } from "../housing-location/housing-location";
@@ -20,20 +20,16 @@ export class Home {
   });
 
   constructor() {
-    this.filteredHousingList =
-      this.housingLocationService.getAllHousingLocations();
+    effect(() => {
+      this.filteredHousingList =
+        this.housingLocationService.housingLocationList();
+    });
   }
 
   searchHouses() {
-    const temp = this.housingLocationService.searchHouses({
+    this.housingLocationService.searchHouses({
       searchedBy: "city",
       city: this.searchForm.value.city,
     });
-    if (temp.length != 0) {
-      this.filteredHousingList = temp;
-    } else {
-      this.filteredHousingList =
-        this.housingLocationService.getAllHousingLocations();
-    }
   }
 }
